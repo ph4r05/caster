@@ -12,6 +12,11 @@
 8) Search for "SSD1306 ESP32" and Install
 9) Search for "LoRa" (by Sandeep Mistry) and Install
 
+# Resources:
+
+* https://github.com/sandeepmistry/arduino-LoRa
+* https://github.com/LilyGO/TTGO-LORA32-V2.0
+
 ## Credits
 
 Icons made by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/).

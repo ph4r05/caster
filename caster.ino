@@ -131,6 +131,7 @@ void loop()
   char inData[66];
   uint8_t payload[PACKET_SIZE] = {0};
 
+  //LoRa.receive();
   if (LoRa.available()){
     int packetSize = LoRa.parsePacket();
     if (packetSize) {

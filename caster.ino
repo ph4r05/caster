@@ -89,10 +89,10 @@ void onReceive(int packetSize)
 {
   uint8_t payload[PACKET_SIZE] = {0};
 
-  //Serial.print("Received packet of size ");
-  //Serial.println(packetSize);
-  //Serial.print("RSSI: ");
-  //Serial.println(LoRa.packetRssi());
+  Serial.print("Received packet of size ");
+  Serial.print(packetSize);
+  Serial.print(", RSSI: ");
+  Serial.println(LoRa.packetRssi());
 
   if (packetSize != 4 + 1 + PACKET_SIZE) {
     Serial.println("Invalid packet size");
@@ -128,7 +128,7 @@ void onReceive(int packetSize)
 
 void loop()
 {
-  char inData[120];
+  char inData[66];
   uint8_t payload[PACKET_SIZE] = {0};
 
   if (LoRa.available()){
@@ -138,15 +138,9 @@ void loop()
     }
   }
 
-  if (Serial.available()>=65){
+  if (Serial.available()>0){
   byte recv = Serial.readBytes(inData, 65);
-  if (recv>0){
-      LoRa.beginPacket();
-      LoRa.write((const uint8_t *)"CTJB", 4);
-      LoRa.write((const uint8_t *)inData, recv);
-      LoRa.endPacket();
-      Serial.println(recv);
-      
+  if (recv==65){
       byte o = inData[0];
       for (int i = 0; i < PACKET_SIZE; i++) {
         payload[i] = inData[1+i];
@@ -158,6 +152,11 @@ void loop()
       display.setColor(WHITE);
       display.drawXbm(32, o * 8, 64, 8, payload);
       display.display();
+
+      LoRa.beginPacket();
+      LoRa.write((const uint8_t *)"CTJB", 4);
+      LoRa.write((const uint8_t *)inData, recv);
+      LoRa.endPacket();
   }
   }
   

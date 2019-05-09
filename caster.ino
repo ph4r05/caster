@@ -132,12 +132,12 @@ void loop()
   uint8_t payload[PACKET_SIZE] = {0};
 
   //LoRa.receive();
-  if (LoRa.available()){
+  //if (LoRa.available()){
     int packetSize = LoRa.parsePacket();
     if (packetSize) {
       onReceive(packetSize);
     }
-  }
+  //}
 
   if (Serial.available()>0){
   byte recv = Serial.readBytes(inData, 65);

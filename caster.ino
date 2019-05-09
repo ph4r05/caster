@@ -128,13 +128,17 @@ void onReceive(int packetSize)
 
 void loop()
 {
-  int packetSize = LoRa.parsePacket();
   char inData[120];
-  
-  if (packetSize) {
-    onReceive(packetSize);
+  uint8_t payload[PACKET_SIZE] = {0};
+
+  if (LoRa.available()){
+    int packetSize = LoRa.parsePacket();
+    if (packetSize) {
+      onReceive(packetSize);
+    }
   }
 
+  if (Serial.available()){
   byte recv = Serial.readBytes(inData, 65);
   if (recv>0){
       LoRa.beginPacket();
@@ -142,6 +146,19 @@ void loop()
       LoRa.write((const uint8_t *)inData, recv);
       LoRa.endPacket();
       Serial.println(recv);
+      
+      byte o = inData[0];
+      for (int i = 0; i < PACKET_SIZE; i++) {
+        payload[i] = inData[1+i];
+      }
+    
+      // display the data
+      display.setColor(BLACK);
+      display.fillRect(32, o * 8, 64, 8);
+      display.setColor(WHITE);
+      display.drawXbm(32, o * 8, 64, 8, payload);
+      display.display();
+  }
   }
   
 }

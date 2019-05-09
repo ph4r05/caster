@@ -1,3 +1,5 @@
+#include <dummy.h>
+
 #include <SPI.h>
 #include <LoRa.h>
 #include <SSD1306Wire.h>
@@ -23,7 +25,7 @@ SSD1306Wire display(0x3C, PIN_OLED_SDA, PIN_OLED_SCL);
 
 void setup()
 {
-  chipid = ESP.getEfuseMac();
+  chipid = 0;//ESP.getEfuseMac();
   Serial.begin(115200);
   Serial.println("Initializing LoRa");
   SPI.begin(PIN_LORA_SCK, PIN_LORA_MISO, PIN_LORA_MOSI, PIN_LORA_CS);
@@ -39,7 +41,7 @@ void setup()
   displayCTJB();
   delay(1000);
   displayAnimal();
-  sendAnimal();
+  //sendAnimal();
 
   Serial.println("Switching to receive");
 }
@@ -70,7 +72,7 @@ void sendAnimal()
   int index = chipid % ICONS_COUNT;
   const uint8_t *data = (const uint8_t *)icons[index];
 
-  Serial.println("Sending animal");
+  //Serial.println("Sending animal");
   for (byte i = 0; i < PAYLOAD_CHUNKS; i++) {
     LoRa.beginPacket();
     LoRa.write((const uint8_t *)"CTJB", 4);
@@ -80,17 +82,17 @@ void sendAnimal()
     Serial.println(i);
     delay(100);
   }
-  Serial.println("DONE");
+  //Serial.println("DONE");
 }
 
 void onReceive(int packetSize)
 {
   uint8_t payload[PACKET_SIZE] = {0};
 
-  Serial.print("Received packet of size ");
-  Serial.println(packetSize);
-  Serial.print("RSSI: ");
-  Serial.println(LoRa.packetRssi());
+  //Serial.print("Received packet of size ");
+  //Serial.println(packetSize);
+  //Serial.print("RSSI: ");
+  //Serial.println(LoRa.packetRssi());
 
   if (packetSize != 4 + 1 + PACKET_SIZE) {
     Serial.println("Invalid packet size");
@@ -112,9 +114,9 @@ void onReceive(int packetSize)
   for (int i = 0; i < PACKET_SIZE; i++) {
     payload[i] = LoRa.read();
   }
-  Serial.print("Data received, chunk ");
-  Serial.println(o);
-  Serial.println();
+  //Serial.print("Data received, chunk ");
+  //Serial.println(o);
+  //Serial.println();
 
   // display the data
   display.setColor(BLACK);
@@ -127,8 +129,19 @@ void onReceive(int packetSize)
 void loop()
 {
   int packetSize = LoRa.parsePacket();
+  char inData[120];
+  
   if (packetSize) {
     onReceive(packetSize);
   }
-}
 
+  byte recv = Serial.readBytes(inData, 65);
+  if (recv>0){
+      LoRa.beginPacket();
+      LoRa.write((const uint8_t *)"CTJB", 4);
+      LoRa.write((const uint8_t *)inData, recv);
+      LoRa.endPacket();
+      Serial.println(recv);
+  }
+  
+}

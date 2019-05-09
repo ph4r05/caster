@@ -54,10 +54,13 @@
 #include "icons/toucan.h"
 #include "icons/turkey.h"
 #include "icons/whale.h"
+#include "icons/pica.h"
+//#include "icons/pica.xbm"
 
-#define ICONS_COUNT 56
+#define ICONS_COUNT 57
 
 static const char *icons[ICONS_COUNT] = {
+    pica_bits,
     ant_bits,
     bear_bits,
     beaver_bits,

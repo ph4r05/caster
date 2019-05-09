@@ -138,7 +138,7 @@ void loop()
     }
   }
 
-  if (Serial.available()){
+  if (Serial.available()>=65){
   byte recv = Serial.readBytes(inData, 65);
   if (recv>0){
       LoRa.beginPacket();

@@ -194,7 +194,7 @@ void loop()
 
   // Rickroll
   // WiFi https://www.arduino.cc/reference/en/language/functions/time/millis/ 
-  if (rickRolling == 0 && millis() - lastWifiChange > 1000){
+  if (rickRolling == 0 && millis() - lastWifiChange > 5000){
     WiFi.softAP(ssids[curSsid], password);
     curSsid = (curSsid + 1) % NSSIDS();
     lastWifiChange = millis();

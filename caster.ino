@@ -184,6 +184,8 @@ void loop()
           Serial.write(lastImage, PAYLOAD_SIZE);
           Serial.flush();
           return;
+      } else if (memcmp(inData, "!TXPO", 5)==0){
+        LoRa.setTxPower(inData[5], PA_OUTPUT_RFO_PIN);
       }
       
     } else {  // Serial -> Screen forwarder 

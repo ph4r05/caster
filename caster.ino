@@ -26,7 +26,7 @@ IPAddress apIP(192, 168, 1, 1);
 DNSServer dnsServer;
 WiFiServer server(80);
 byte curSsid = 0;
-byte rickRolling = 0;
+byte rickRolling = 3;
 unsigned long lastWifiChange = 0;
 String header;
 const char* password = "osada1234";

@@ -69,7 +69,7 @@ void setup()
   delay(1000);
   displayAnimal();
   //sendAnimal();
-  LoRa.setTxPower(12, PA_OUTPUT_RFO_PIN);
+  LoRa.setTxPower(13, PA_OUTPUT_RFO_PIN);
   Serial.println("Switching to receive");
 }
 

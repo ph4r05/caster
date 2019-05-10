@@ -69,7 +69,7 @@ void setup()
   delay(1000);
   displayAnimal();
   //sendAnimal();
-
+  LoRa.setTxPower(12, PA_OUTPUT_RFO_PIN);
   Serial.println("Switching to receive");
 }
 
@@ -141,6 +141,8 @@ void onReceive(int packetSize)
   //Serial.println(o);
   //Serial.println();
 
+  memcpy(lastImage + o * 64, payload, 64);
+
   // display the data
   display.setColor(BLACK);
   display.fillRect(32, o * 8, 64, 8);
@@ -152,7 +154,9 @@ void onReceive(int packetSize)
   //Serial.write(o);
   //Serial.write(payload, PACKET_SIZE);
   //Serial.flush();
-  memcpy(lastImage + o * 64, payload, 64);
+  
+  Serial.println("!INCO");
+  Serial.flush();
 }
 
 void loop()
@@ -176,9 +180,10 @@ void loop()
       } else if (memcmp(inData, "!RR1", 4)==0){
         rickRolling = 1;
       } else if (memcmp(inData, "!DUMP", 5)==0){
-          Serial.print("!RECV");
+          Serial.write((const uint8_t*) "!RECV", 5);
           Serial.write(lastImage, PAYLOAD_SIZE);
           Serial.flush();
+          return;
       }
       
     } else {  // Serial -> Screen forwarder 

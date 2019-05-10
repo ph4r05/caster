@@ -21,6 +21,10 @@
 #define PIN_LORA_RST 12
 #define LORA_FREQ 868000000
 
+#define PAYLOAD_SIZE 512
+#define PACKET_SIZE 64
+#define PAYLOAD_CHUNKS (PAYLOAD_SIZE / PACKET_SIZE)
+
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 1, 1);
 DNSServer dnsServer;
@@ -41,7 +45,7 @@ const char* ssids[] = {
 };
 
 #define NSSIDS() (sizeof(ssids)/sizeof(ssids[0]))
-
+byte lastImage[PAYLOAD_SIZE] = {0};
 uint64_t chipid;
 
 SSD1306Wire display(0x3C, PIN_OLED_SDA, PIN_OLED_SCL);
@@ -86,10 +90,6 @@ void displayAnimal()
   display.display();
 }
 
-#define PAYLOAD_SIZE 512
-#define PACKET_SIZE 64
-#define PAYLOAD_CHUNKS (PAYLOAD_SIZE / PACKET_SIZE)
-
 void sendAnimal()
 {
   int index = chipid % ICONS_COUNT;
@@ -112,13 +112,13 @@ void onReceive(int packetSize)
 {
   uint8_t payload[PACKET_SIZE] = {0};
 
-  Serial.print("Received packet of size ");
-  Serial.print(packetSize);
-  Serial.print(", RSSI: ");
-  Serial.println(LoRa.packetRssi());
+  //Serial.print("Received packet of size ");
+  //Serial.print(packetSize);
+  //Serial.print(", RSSI: ");
+  //Serial.println(LoRa.packetRssi());
 
   if (packetSize != 4 + 1 + PACKET_SIZE) {
-    Serial.println("Invalid packet size");
+    //Serial.println("Invalid packet size");
     return;
   }
   byte hdr[4];
@@ -147,6 +147,12 @@ void onReceive(int packetSize)
   display.setColor(WHITE);
   display.drawXbm(32, o * 8, 64, 8, payload);
   display.display();
+
+  //Serial.print("!RECV");
+  //Serial.write(o);
+  //Serial.write(payload, PACKET_SIZE);
+  //Serial.flush();
+  memcpy(lastImage + o * 64, payload, 64);
 }
 
 void loop()
@@ -169,6 +175,10 @@ void loop()
         rickRolling = 0;
       } else if (memcmp(inData, "!RR1", 4)==0){
         rickRolling = 1;
+      } else if (memcmp(inData, "!DUMP", 5)==0){
+          Serial.print("!RECV");
+          Serial.write(lastImage, PAYLOAD_SIZE);
+          Serial.flush();
       }
       
     } else {  // Serial -> Screen forwarder 
